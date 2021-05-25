@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="../RESOURCES/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/js/bootstrap.bundle.js">
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+<a href="Add.html" class="btn btn-info m-4">Add new Product</a>
+
+        <div class="row g-3" id="dataRow">
+            <div class="col-md-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between"> <span class="font-weight-bold">Wood Sofa set-3</span>
+                        <span class="font-weight-bold">$550</span> </div>
+                    <p class="card-text mb-1 mt-1">Some quick example text to build on the card title and make up the
+                        bulk of the card's content.</p>
+                    <div class="d-flex align-items-center flex-row"> <img src="../RESOURCES/Images/e9VnSng.png"
+                            width="20"> <span class="guarantee">2 Years Guarantee</span> </div>
+                </div>
+                <hr>
+                <div class="card-body">
+                    <div class="text-right buttons"> <button class="btn btn-outline-dark">add to wishlist</button>
+                        <button class="btn btn-dark" onclick="DeleteProduct()">Add to cart</button> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+$.ajax({
+        type: "GET",
+        dataType:'json',
+        cache: false,
+        url: "http://localhost:6526/api/Products",
+        headers:{
+            Authorization :"bearer "
+            + sessionStorage.getItem("AccessToken")
+        },
+        success: function (data) {
+
+            console.log(data);
+
+            data.forEach(product => {
+
+                $("#dataRow").append(
+                    `<div class="col-md-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between"> <span class="font-weight-bold">${product.Name}</span>
+                        <span class="font-weight-bold">$${product.Price}</span> </div>
+                    <p class="card-text mb-1 mt-1">${product.Details}</p>
+                    <div class="d-flex align-items-center flex-row"> <img src="../RESOURCES/Images/e9VnSng.png"
+                            width="20"> <span class="guarantee"> ${product.Guarantee} Years Guarantee</span> </div>
+                </div>
+                <hr>
+                <div class="card-body">
+                    <div class="text-right buttons">
+                        <button class="btn btn-outline-dark" onclick="GetProductDetails(${product.Id})"> Details </button>
+                         <button class="btn btn-outline-dark" onclick="UpdateProduct(${product.Id})"> Update </button>
+                        <button class="btn btn-dark" onclick="DeleteProduct(${product.Id})"> Delete </button> </div>
+                </div>
+            </div>
+                    `
+                    
+                );
+
+                console.log(product)
+
+            });
+
+        },
+        error: (r) => {
+            let errorrMessage = r.responseJSON.Message;
+            console.log(r.responseJSON)
+            for (let i in r.responseJSON.ModelState)
+                errorrMessage += "\n" + r.responseJSON.ModelState[i][0];
+
+            alert(errorrMessage);
+
+        }
+
+    });
+
+    function DeleteProduct( id )
+    {
+
+        $.ajax({
+        type: "DELETE",
+        dataType:'json',
+        cache: false,
+        url: `http://localhost:6526/api/Products/${id}`,
+        headers:{
+            Authorization :"bearer "
+            + sessionStorage.getItem("AccessToken")
+        },
+        success: function (data) {
+
+            console.log(data);
+
+            location.href= "Home.html";
+
+        },
+        error: (r) => {
+            let errorrMessage = r.responseJSON.Message;
+            console.log(r.responseJSON)
+            for (let i in r.responseJSON.ModelState)
+                errorrMessage += "\n" + r.responseJSON.ModelState[i][0];
+
+            alert(errorrMessage);
+
+        }
+
+    });
+
+
+    } 
+
+    function GetProductDetails(id)
+    {
+        sessionStorage.setItem("productId" , id);
+        location.href= "Details.html";
+        
+    }
+
+    function UpdateProduct(id)
+    {
+        sessionStorage.setItem("productId" , id);
+        location.href= "Update.html";
+
+
+    }
+
+    </script>
+</body>
+
+</html>

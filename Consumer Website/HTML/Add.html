@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add</title>
+    <script src="../RESOURCES/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/js/bootstrap.bundle.js">
+
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <a href="Home.html" class="btn btn-danger m-3 ">Back to Home</a>
+        <form class="form" action="http://localhost:6526/api/Products">
+            <fieldset>
+
+                <!-- Form Name -->
+                <legend>Add Product</legend>
+
+
+                <!-- Text input-->
+                <div class="form-group m-2">
+                    <label class="col-md-4 control-label font-weight-bold" for="Name">PRODUCT NAME</label>
+                    <div class="col-md-4">
+                        <input id="Name" name="Name" placeholder="PRODUCT NAME" class="form-control input-md"
+                            required="" type="text">
+
+                    </div>
+                </div>
+
+                <!-- Text input-->
+                <div class="form-group m-2">
+                    <label class="col-md-4 control-label font-weight-bold mb-2" for="Price">PRODUCT PRICE</label>
+                    <div class="col-md-4">
+                        <input id="Price" name="Price" placeholder="PRODUCT PRICE" class="form-control input-md"
+                            required type="number">
+
+                    </div>
+                </div>
+
+                <!-- Text input-->
+                <div class="form-group m-2">
+                    <label class="col-md-4 control-label font-weight-bold mb-2" for="Quantity">AVAILABLE QUANTITY</label>
+                    <div class="col-md-4">
+                        <input id="Quantity" name="Quantity" placeholder="AVAILABLE QUANTITY"
+                            class="form-control input-md" required type="number">
+
+                    </div>
+                </div>
+
+
+                <!-- Select Basic -->
+                <div class="form-group m-2">
+                    <label class="col-md-4 control-label font-weight-bold mb-2" for="Guarantee">PRODUCT GUARANTEE</label>
+                    <div class="col-md-4">
+                        <select id="Guarantee" name="Guarantee" class="form-control">
+                            <option value="1"> 1 Year</option>
+                            <option value="2"> 2 Years</option>
+                            <option value="3"> 3 Years</option>
+                            <option value="4"> 4 Years</option>
+                            <option value="5"> 5 Years</option>
+                            <option value="6"> 6 Years</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group m-2">
+                    <label class="col-md-4 control-label font-weight-bold mb-2" for="Details">PRODUCT DESCRIPTION</label>
+                    <div class="col-md-4">
+                        <textarea class="form-control" id="Details" name="Details" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group m-2">
+                    <div class="col-md-4">
+                        <button id="singlebutton" name="singlebutton" class="btn btn-primary" type="submit">Add
+                            Product</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+
+    </div>
+    <script>
+
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: $(this).attr('action'),
+                headers: {
+                    Authorization: "bearer "
+                        + sessionStorage.getItem("AccessToken")
+                },
+                data: $(this).serialize(),
+                success: function (data) {
+
+                    console.log(data);
+                    location.href = "Home.html";
+
+                },
+                error: (r) => {
+                    let errorrMessage = r.responseJSON.Message;
+                    console.log(r.responseJSON)
+                    for (let i in r.responseJSON.ModelState)
+                        errorrMessage += "\n" + r.responseJSON.ModelState[i][0];
+
+                    alert(errorrMessage);
+
+                }
+
+            });
+        });
+
+    </script>
+</body>
+
+</html>

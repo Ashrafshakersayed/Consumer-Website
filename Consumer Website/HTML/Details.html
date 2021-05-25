@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <script src="../RESOURCES/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/js/bootstrap.bundle.js">
+    <link rel="stylesheet" href="../RESOURCES/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../CSS/Details style.css">
+</head>
+
+<body>
+
+
+    <div class="container">
+        <a href="Home.html" class="btn btn-danger m-3 ">Back to Home</a>
+
+        <div id="productContainer"></div>
+    </div>
+
+    <script>
+
+
+        let productId = sessionStorage.getItem("productId");
+
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            cache: false,
+            url: `http://localhost:6526/api/Products/${productId}`,
+            headers: {
+                Authorization: "bearer "
+                    + sessionStorage.getItem("AccessToken")
+            },
+            success: function (product) {
+
+                console.log(product);
+
+                $("#productContainer").html(`
+            <div class="card">
+			<div class="container-fliud">
+				<div class="wrapper row">
+				
+					<div class="details col-md-6">
+						<h3 class="product-title">${product.Name}</h3>
+					<h4 calss="product-title font-weight-bold" >product description :
+						<span class="product-description">${product.Details}</span></h4>
+						<h4 class="price">current price: <span>$${product.Price}</span></h4>
+						<h5 class="sizes price">AVAILABLE QUANTITY :
+							<span data-toggle="tooltip" title="Quantity"> ${product.Quantity}</span>
+							
+						</h5>
+					    <span class="sizes"><strong>${product.Guarantee}</strong> Years Guarantee</span> </div>
+
+						<div class="action">
+							<a class="add-to-cart btn btn-default" href="Home.html">Back to Home</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+        `);
+
+
+            },
+            error: (r) => {
+                let errorrMessage = r.responseJSON.Message;
+                console.log(r.responseJSON)
+                for (let i in r.responseJSON.ModelState)
+                    errorrMessage += "\n" + r.responseJSON.ModelState[i][0];
+
+                alert(errorrMessage);
+
+            }
+
+        });
+
+
+    </script>
+</body>
+
+</html>
